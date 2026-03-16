@@ -28,18 +28,17 @@ except ValueError as e:
     print("\n--- TESTANDO O PADRÃO STATE RESTRITIVO ---")
 carro_estado = VeiculoFactory.criar_veiculo("carro", "HJI3K45", categoria.ECONOMICO, 100.0)
 
-# 1. Tentar alugar um carro de frota normal
-carro_estado.tentar_alugar() # OK - Transitará
 
-# 2. Tentar locar novamente para outro!
-carro_estado.tentar_alugar() # Erro Interativo ("Já está alugado!")
+carro_estado.tentar_alugar()
 
-# 3. Tentar mandar pra manutenção com cleinte
-carro_estado.reter_na_frota_pra_conserto() # Bloqueado
 
-# 4. Devolver 
-carro_estado.tentar_devolver() # Ok (Retorna)
+carro_estado.tentar_alugar() 
 
-# 5. Colocar em checkups da empresa
-carro_estado.reter_na_frota_pra_conserto() # Ok 
-carro_estado.tentar_alugar() # Falha! Está em Manutenção.
+
+carro_estado.reter_na_frota_pra_conserto() 
+
+carro_estado.tentar_devolver() 
+
+
+carro_estado.reter_na_frota_pra_conserto() 
+carro_estado.tentar_alugar() 
