@@ -7,19 +7,18 @@ class locacao:
         if data_fim < data_inicio:
             raise DataInvalidaError("A data de devolução não pode ser anterior à data de início.")
         
-        self.__data_inicio = data_inicio
-        self.__data_fim = data_fim
+        self.data_inicio = data_inicio
+        self.data_fim = date.today()
         self.veiculo = veiculo
 
     def calcular_valor_locacao(self):
-            delta = self.__data_fim - self.__data_inicio
-            dias = delta.days
+            if self.data_fim is None:
+                self.data_fim = date.today()
+            dias = (self.data_fim - self.data_inicio).days
             if dias <= 0:
                  dias = 1
-            valor_diarias = dias * self.veiculo.taxa_diaria
-            valor_total = valor_diarias + self.veiculo.valor_do_seguro
-        
-            return valor_total
+            valor_total = self.estrategia.calcular_diarias(self.veiculo, dias)
+            return float(valor_total)
     @property   
     def veiculo(self):
         return self.__veiculo
