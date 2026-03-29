@@ -43,6 +43,14 @@ class veiculo(ABC):
                      raise PlacaInvalidaError("Quinto caractere deve ser uma letra")
                else:
                     print(f"placa {placa} é válida")
+
+    def exibir_dados(self):
+        info = f"Placa: {self.placa}\n"
+        info += f"Tipo: {type(self).__name__.capitalize()}\n"
+        info += f"Categoria: {self.categoria.value}\n"
+        info += f"Taxa Diária: R$ {self.taxa_diaria:.2f}\n"
+        info += f"Seguro: R$ {self.valor_do_seguro:.2f}"
+        return info
                     
          
                 
