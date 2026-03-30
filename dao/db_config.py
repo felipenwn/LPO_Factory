@@ -6,8 +6,8 @@ class DatabaseConfig:
     def get_connection():
         try:
             conexao = psycopg2.connect(
-                user = "",
-                password = "",
+                user = "pgadmin",
+                password = "pgadmin",
                 host = "localhost",
                 port = "5432",
                 database = "lpo_factory"
