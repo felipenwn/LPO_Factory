@@ -24,3 +24,21 @@ try:
     VeiculoFactory.criar_veiculo("barco", "DEF1234", categoria.EXECUTIVO, 200)
 except ValueError as e:
     print(f"SUCESSO: O sistema bloqueou a criação e gerou o erro -> {e}")
+
+    print("\n--- TESTANDO O PADRÃO STATE RESTRITIVO ---")
+carro_estado = VeiculoFactory.criar_veiculo("carro", "HJI3K45", categoria.ECONOMICO, 100.0)
+
+
+carro_estado.tentar_alugar()
+
+
+carro_estado.tentar_alugar() 
+
+
+carro_estado.reter_na_frota_pra_conserto() 
+
+carro_estado.tentar_devolver() 
+
+
+carro_estado.reter_na_frota_pra_conserto() 
+carro_estado.tentar_alugar() 
