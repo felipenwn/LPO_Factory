@@ -1,6 +1,7 @@
 from model.veiculo_factory import VeiculoFactory
 from model.locacao import locacao
 from model.categoria import categoria
+from model.decoradores import GPSDecorator, SeguroTerceirosDecorator
 from datetime import date
 
 print("\n[ TESTE 1 ]: Criação via Factory")
@@ -24,3 +25,33 @@ try:
     VeiculoFactory.criar_veiculo("barco", "DEF1234", categoria.EXECUTIVO, 200)
 except ValueError as e:
     print(f"SUCESSO: O sistema bloqueou a criação e gerou o erro -> {e}")
+
+    print("\n--- TESTANDO O PADRÃO STATE RESTRITIVO ---")
+carro_estado = VeiculoFactory.criar_veiculo("carro", "HJI3K45", categoria.ECONOMICO, 100.0)
+
+carro_estado.tentar_alugar() 
+
+
+carro_estado.tentar_alugar() 
+
+
+carro_estado.reter_na_frota_pra_conserto() 
+
+
+carro_estado.tentar_devolver() 
+
+
+carro_estado.reter_na_frota_pra_conserto() 
+carro_estado.tentar_alugar()
+
+
+
+print("\n--- TESTANDO O PADRÃO DECORATOR ---")
+locacao_base = locacao(data_inicio=date(2026, 3, 1), data_fim=date(2026, 3, 5), veiculo=meu_carro)
+print(f"Valor Base (somente Diária + Seguro Base): R$ {locacao_base.calcular_valor_locacao()}")
+
+locacao_com_gps = GPSDecorator(locacao_base)
+print(f"Valor somado do pacote + GPS: R$ {locacao_com_gps.calcular_valor_locacao()}")
+
+locacao_vip_top = SeguroTerceirosDecorator(locacao_com_gps)
+print(f"Valor pacote completão (Base + GPS + Seg.Terceiros): R$ {locacao_vip_top.calcular_valor_locacao()}")
