@@ -1,15 +1,17 @@
 import tkinter as tk
 from tkinter import Button, Label, Entry, messagebox
-from tkinter import ttk # Usado para criar as caixinhas de seleção (Combobox)
-from model.veiculo_factory import VeiculoFactory
-from model.categoria import categoria
+from tkinter import ttk
 
-def abrir_formulario(janela_principal, lista_veiculos, listbox_veiculos):
+def abrir_formulario(janela_principal, controller, callback_atualizar, veiculo_edicao=None):
     janela = tk.Toplevel(janela_principal)
-    janela.title("Novo Veículo")
     janela.geometry("300x400")
 
-    
+    modo_edicao = veiculo_edicao is not None
+    if modo_edicao:
+        janela.title("Editar Veículo")
+    else:
+        janela.title("Novo Veículo")
+
     lbl_placa = Label(janela, text="Informe a Placa:", pady=5)
     lbl_placa.pack()
     txt_placa = Entry(janela)
@@ -17,7 +19,6 @@ def abrir_formulario(janela_principal, lista_veiculos, listbox_veiculos):
 
     lbl_tipo = Label(janela, text="Tipo do Veículo:", pady=5)
     lbl_tipo.pack()
-    # Combobox é uma lista suspensa (recomendação da professora no PDF)
     combo_tipo = ttk.Combobox(janela, values=["carro", "motorhome"], state="readonly")
     combo_tipo.pack()
 
@@ -31,37 +32,34 @@ def abrir_formulario(janela_principal, lista_veiculos, listbox_veiculos):
     txt_taxa = Entry(janela)
     txt_taxa.pack()
 
+    # Preencher os dados se for edição
+    if modo_edicao:
+        txt_placa.insert(0, veiculo_edicao.placa)
+        txt_placa.config(state="disabled") # Não permite alterar a placa na edição
+        
+        # Pega o tipo exato (ex: Carro -> carro)
+        combo_tipo.set(type(veiculo_edicao).__name__.lower())
+        combo_categoria.set(veiculo_edicao.categoria.name)
+        txt_taxa.insert(0, str(veiculo_edicao.taxa_diaria))
+
     def salvar_veiculo():
         placa = txt_placa.get()
         tipo = combo_tipo.get()
         categoria_texto = combo_categoria.get()
-        taxa_texto = txt_taxa.get().replace(",", ".") 
+        taxa_texto = txt_taxa.get()
 
-        if placa.strip() and tipo.strip() and categoria_texto.strip() and taxa_texto.strip():
-            try:
-                taxa = float(taxa_texto)
-                
-                if categoria_texto == "ECONOMICO":
-                    cat_enum = categoria.ECONOMICO
-                else:
-                    cat_enum = categoria.EXECUTIVO
-
-                novo_veiculo = VeiculoFactory.criar_veiculo(tipo, placa, cat_enum, taxa)
-                lista_veiculos.append(novo_veiculo)
-
-                listbox_veiculos.delete(0, tk.END)
-                for v in lista_veiculos:
-                    listbox_veiculos.insert(tk.END, f"Placa: {v.placa} | Tipo: {type(v).__name__}")
-
-                messagebox.showinfo("Sucesso", "Veículo cadastrado!")
-                janela.destroy() #
-                
-            except ValueError:
-                messagebox.showerror("Erro", "A taxa diária deve ser um número válido.")
-            except Exception as e:
-                messagebox.showerror("Erro", f"Erro: {e}")
+        if modo_edicao:
+            sucesso, msg = controller.atualizar_veiculo(placa, tipo, categoria_texto, taxa_texto)
         else:
-            messagebox.showerror("Erro", "Todos os campos são obrigatórios!")
+            sucesso, msg = controller.salvar_veiculo(placa, tipo, categoria_texto, taxa_texto)
 
-    btn_salvar = Button(janela, text="Salvar", command=salvar_veiculo, pady=5)
+        if sucesso:
+            messagebox.showinfo("Sucesso", msg)
+            callback_atualizar() # Atualiza a listbox na tela principal
+            janela.destroy()
+        else:
+            messagebox.showerror("Erro", msg)
+
+    btn_texto = "Atualizar" if modo_edicao else "Salvar"
+    btn_salvar = Button(janela, text=btn_texto, command=salvar_veiculo, pady=5)
     btn_salvar.pack(pady=15)
