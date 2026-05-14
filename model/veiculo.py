@@ -49,7 +49,6 @@ class veiculo(ABC):
         info += f"Seguro: R$ {self.valor_do_seguro:.2f}"
         return info
 
-
     @property
     def estado_atual(self):
         return self._estado_atual
