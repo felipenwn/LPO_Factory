@@ -1,10 +1,11 @@
 import sys 
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from LPO_Factory.model.veiculo_factory import VeiculoFactory
-from generic_dao import GenericDAO
+from model.veiculo_factory import VeiculoFactory
+from dao.generic_dao import GenericDAO
 from dao.db_config import DatabaseConfig
 from model.veiculo import *
+from model.categoria import categoria
 
 class VeiculoDAO(GenericDAO):
     def __init__(self):
@@ -15,7 +16,7 @@ class VeiculoDAO(GenericDAO):
         try:
             cursor = self.conexao.cursor()
             query = "INSERT INTO veiculo (vei_placa, vei_categoria, vei_taxa_diaria,vei_estado_atual, vei_tipo) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(query, (veiculo.placa, veiculo.categoria.value, veiculo.taxa_diaria, veiculo.estado_atual.__class__.__name__(), veiculo.tipo))
+            cursor.execute(query, (veiculo.placa, veiculo.categoria.value, veiculo.taxa_diaria, veiculo.estado_atual.__class__.__name__, type(veiculo).__name__))
             self.conexao.commit()
             return True,"Veículo salvo com sucesso."
         except Exception as e:
@@ -36,7 +37,8 @@ class VeiculoDAO(GenericDAO):
             linhas = cursor.fetchall()
             veiculos = []
             for cada_linha in linhas:
-                obj = VeiculoFactory.criar_veiculo(cada_linha[0],cada_linha[1],cada_linha[2],float(cada_linha[3]))
+                cat_enum = categoria(cada_linha[2])
+                obj = VeiculoFactory.criar_veiculo(cada_linha[0],cada_linha[1],cat_enum,float(cada_linha[3]))
                 veiculos.append(obj)
             return veiculos
         except Exception as e:
@@ -56,7 +58,8 @@ class VeiculoDAO(GenericDAO):
             linha = cursor.fetchone()
             
             if linha: 
-                return VeiculoFactory.criar_veiculo(linha[0], linha[1], linha[2], float(linha[3]))
+                cat_enum = categoria(linha[2])
+                return VeiculoFactory.criar_veiculo(linha[0], linha[1], cat_enum, float(linha[3]))
             return None
         except Exception as e:
             print(f"Erro ao buscar veículo: {placa}. Erro: {e}")
@@ -93,7 +96,7 @@ class VeiculoDAO(GenericDAO):
             cursor.execute(query, (veiculo.categoria.value,
                                    veiculo.taxa_diaria,
                                    veiculo.estado_atual.__class__.__name__,
-                                   veiculo.tipo,
+                                   type(veiculo).__name__,
                                    veiculo.placa))
             self.conexao.commit()
             return True, "Veículo atualizado com sucesso"
