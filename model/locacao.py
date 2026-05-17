@@ -2,16 +2,19 @@ from model.veiculo import veiculo
 from datetime import date
 from model.exception import DataInvalidaError
 from model.locacaoStrategy import CalculoPadraoStrategy
+from model.status_locacao import StatusLocacao
 
 class locacao:
-    def __init__(self, data_inicio: date, data_fim: date, veiculo: veiculo, estrategia=None):
+    def __init__(self, data_inicio: date, data_fim: date, veiculo: veiculo, estrategia=None, status=StatusLocacao.RESERVADO, id=None):
         if data_fim < data_inicio:
             raise DataInvalidaError("A data de devolução não pode ser anterior à data de início.")
         
+        self.id = id
         self.data_inicio = data_inicio
         self.data_fim = data_fim 
         self.veiculo = veiculo
-        self.estrategia = estrategia if estrategia else CalculoPadraoStrategy() 
+        self.status = status if isinstance(status, StatusLocacao) else StatusLocacao(status)
+        self.estrategia = estrategia if estrategia else CalculoPadraoStrategy()
     def calcular_valor_locacao(self):
         if self.data_fim is None:
             self.data_fim = date.today()

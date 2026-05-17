@@ -3,9 +3,9 @@ from tkinter import Button, Label, Listbox, Frame, messagebox
 from views.veiculo_form_view import abrir_formulario
 from control.veiculo_controller import VeiculoController
 
-def iniciar_tela_principal():
-    janela = tk.Tk()
-    janela.title("Locadora de Veículos")
+def abrir_lista_veiculos(janela_pai):
+    janela = tk.Toplevel(janela_pai)
+    janela.title("Veículos Cadastrados")
     janela.geometry("500x400")
 
     controller = VeiculoController()
@@ -29,6 +29,7 @@ def iniciar_tela_principal():
 
     def acao_novo():
         abrir_formulario(janela, controller, atualizar_listbox)
+        # O fluxo já é tratado pelo callback_atualizar na tela de form, não precisa wait_window aqui pois o callback já recarrega
 
     def acao_editar():
         selecionado = listbox_veiculos.curselection()
@@ -81,5 +82,3 @@ def iniciar_tela_principal():
 
     # Carrega a lista inicial do BD
     atualizar_listbox()
-
-    janela.mainloop()

@@ -1,4 +1,6 @@
-from views.veiculo_list_view import iniciar_tela_principal
+from views.main_window import iniciar_aplicacao
+from dao.db_config import DatabaseConfig
 
 if __name__ == "__main__":
-    iniciar_tela_principal()
+    DatabaseConfig.setup_database()
+    iniciar_aplicacao()
