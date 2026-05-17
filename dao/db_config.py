@@ -23,7 +23,7 @@ class DatabaseConfig:
         if conexao:
             try:
                 cursor = conexao.cursor()
-                # Tabela de Veículos (já existente, mas garantimos a estrutura)
+                # Tabela de Veículos 
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS veiculo (
                         vei_placa VARCHAR(7) PRIMARY KEY,
